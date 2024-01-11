@@ -76,7 +76,7 @@ def create_admin():
         return jsonify({"error": str(e)})
 
 # Send email API route
-@app.route("/sendEmail", methods=['POST'])
+@app.route('/sendEmail', methods=['POST'])
 def send_email():
     subject = request.json["subject"]
     recipient = request.json["to"]
