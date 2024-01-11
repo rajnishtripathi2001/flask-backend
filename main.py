@@ -44,7 +44,7 @@ def index():
     return render_template('home.html')
 
 # Login API route
-@app.route(os.getenv("LOGIN_ROUTE"), methods=['POST'])
+@app.route('/login', methods=['POST'])
 def login():
     request_data = request.json
     # get data from mongodb
@@ -60,7 +60,7 @@ def login():
         return jsonify({"error": str(e)})
 
 #  Create a new admin API route
-@app.route(os.getenv("CREATE_ADMIN"), methods=['POST'])
+@app.route('/createAdmin', methods=['POST'])
 def create_admin():
     # insert into mongodb
     collection = db["admins"]
@@ -76,7 +76,7 @@ def create_admin():
         return jsonify({"error": str(e)})
 
 # Send email API route
-@app.route(os.getenv("SEND_EMAIL"), methods=['POST'])
+@app.route("/sendEmail", methods=['POST'])
 def send_email():
     subject = request.json["subject"]
     recipient = request.json["to"]
@@ -93,7 +93,7 @@ def send_email():
     return jsonify({"message": "Successful"})
 
 # Find User API route
-@app.route(os.getenv("Find_USER"), methods=['POST'])
+@app.route('/findUser', methods=['POST'])
 def find_user():
     request_data = request.json
     # get data from mongodb
@@ -108,7 +108,7 @@ def find_user():
         return jsonify({"error": str(e)})
 
 # update User API route
-@app.route(os.getenv("UPDATE_USER"), methods=['POST'])
+@app.route('/updateUser', methods=['POST'])
 def update_user():
     request_data = request.json
     collection = db["users"]
@@ -126,7 +126,7 @@ def update_user():
         return jsonify({"error : ", str(e)})
 
 # Restric User API route
-@app.route(os.getenv("RESTRICT_USER"), methods=['POST'])
+@app.route('/restrict', methods=['POST'])
 def restrict_user():
     request_data = request.json
     collection = db["users"]
@@ -138,7 +138,7 @@ def restrict_user():
         return jsonify({"error": str(e)})
 
 # Remove Restriction from the  Restriced User API route
-@app.route(os.getenv("REMOVE_RESTRICTION"), methods=['POST'])
+@app.route('/removeRestriction', methods=['POST'])
 def unrestrict_user():
     request_data = request.json
     collection = db["users"]
@@ -150,7 +150,7 @@ def unrestrict_user():
         return jsonify({"error": str(e)})
 
 # Delete User API route
-@app.route(os.getenv("DELETE_USER"), methods=['POST'])
+@app.route('/deleteUser', methods=['POST'])
 def delete_user():
     request_data = request.json
     collection = db["users"]
