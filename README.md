@@ -4,12 +4,19 @@ description: A Flask backend Server for SociWave Admin Panel to manage the SociW
 tags:
   - python
   - flask
+  - APIs
+  - backend
+  - server
+  - sociwave
+  - admin-panel
 ---
 
 ## ✨ Features
 
 - Python
 - Flask
+- REST APIs
+- MongoDB
 
 ## 💁‍♀️ How to use
 
