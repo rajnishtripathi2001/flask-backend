@@ -162,6 +162,42 @@ def delete_user():
     except Exception as e:
         return jsonify({"error": str(e)})
 
+# Get all Orders API route
+@app.route(os.getenv("ORDERS"), methods=['GET'])
+def orders():
+    collection = db["orders"]
+    try:
+        result = collection.find().sort('createdAt', -1)
+        if result:
+            return jsonify({"message": "Successful", "orders": True, "Info":list(result)})
+        else:
+            return jsonify({"message": "Failed"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    
+# Mark Order as Delivered and send mail API route
+@app.route(os.getenv("DELIVERED"), methods=['POST'])
+def delivered():
+    request_data = request.json
+    collection = db["orders"]
+    collection2 = db["users"]
+    try:
+        collection.find_one_and_update({"_id": request_data["id"]},{"$set": {"action": "Done"}})
+        email = collection2.find_one({"_id": request_data["uID"]})
+        
+        subject = "Order Delivered"
+        recipient = email["email"]
+        body = "Your order has been delivered successfully."
+        if not (subject and recipient and body):
+          return jsonify({"message": "Missing data!"})
+        msg = Message(subject=subject, sender=mail_username,recipients=[recipient])
+        msg.body = body
+        mail.send(msg)
+
+        return jsonify({"message": "Successfully Delivered"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    
 
 
 if __name__ == '__main__':
