@@ -162,7 +162,7 @@ def delete_user():
     except Exception as e:
         return jsonify({"error": str(e)})
 
-# Get all Orders API route
+# Get all Orders listed API route
 @app.route(os.getenv("ORDERS"), methods=['GET'])
 def orders():
     collection = db["orders"]
@@ -198,6 +198,33 @@ def delivered():
     except Exception as e:
         return jsonify({"error": str(e)})
     
+# Get all Transactions listed API route
+@app.route(os.getenv("TRANSACTIONS"),methods=['GET'])
+def transactions():
+    collection = db["transactions"]
+    try:
+        result = collection.find().sort('createdAt', -1)
+        if result:
+            return jsonify({"message": "Successful", "orders": True, "Info":list(result)})
+        else:
+            return jsonify({"message": "Failed"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+# Verify the Transaction
+@app.route(os.getenv("VERIFY_TRANSACTION"),methods=['POST'])
+def verify_transaction():
+    request_data = request.json
+    collection = db['transactions']
+
+    try:
+        collection.find_one_and_update({"_id": request_data["id"]},{"$set": {"verification": "Verified"}})
+        return jsonify({"message": "Successfully Verified the transaction"})
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 
 
 if __name__ == '__main__':
