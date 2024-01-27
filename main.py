@@ -235,7 +235,7 @@ def find_wallet():
         if(result ):
             return jsonify({"message":"Found","result":result})
         else:
-            return jsonify({"message":"Not Found","result":result})
+            return jsonify({"message":"Not Found"})
 
     except Exception as e:
         return jsonify({"error": str(e)})
@@ -253,6 +253,35 @@ def update_wallet():
 
     except Exception as e:
         return jsonify({"error": str(e)})
+
+# Get User's All transaction
+@app.route(os.getenv("ALL_TRANSACTIONS"),methods=["POST"])
+def get_transactions():
+    request_data = request.json
+    collection = db["transactions"]
+
+    try:
+        result = collection.find({"uID":request_data["walletID"]}).sort('createdAt', -1)
+        if result:
+            return jsonify({"message": "Transaction Found", "result":list(result)})
+        else:
+            return jsonify({"Message":"No Transaction Found"})
+
+
+
+    except Exception as e:
+        return jsonify({"Error":str(e)})
+
+# Wallet State Management API route
+@app.route(os.getenv("WALLET_STATE"),methods=["POST"])
+def wallet_state():
+    request_data = request.json
+    collection = db["wallets"]
+    
+    collection.find_one_and_update({"_id":request_data["task"]["id"]},{"$set": {"walletstatus": request_data["task"]["state"]}})
+
+    return jsonify({"message":"Action Completed"})
+
 
 if __name__ == '__main__':
     app.run(debug=True,port=os.getenv("PORT", default=5000))
