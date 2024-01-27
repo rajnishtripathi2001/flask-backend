@@ -224,8 +224,35 @@ def verify_transaction():
     except Exception as e:
         return jsonify({"error": str(e)})
 
+# Find Wallet API route
+@app.route(os.getenv("FIND_WALLET"),methods=['POST'])
+def find_wallet():
+    request_data = request.json
+    collection = db["wallets"]
 
+    try:
+        result  = collection.find_one({"_id":request_data["walletID"]})
+        if(result ):
+            return jsonify({"message":"Found","result":result})
+        else:
+            return jsonify({"message":"Not Found","result":result})
 
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+# Update Wallet API route
+@app.route(os.getenv("UPDATE_WALLET"),methods=['POST'])
+def update_wallet():
+    request_data = request.json
+    collection = db["wallets"]
+
+    try:
+        if(request_data["list"]["task"] == "addMoney"):
+            collection.find_one_and_update({"_id": request_data["list"]["id"]},{"$set": {"balance": request_data["list"]["amount"]}})
+            return jsonify({"message": "Successfully Updated the wallet"})
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 if __name__ == '__main__':
     app.run(debug=True,port=os.getenv("PORT", default=5000))
