@@ -267,8 +267,6 @@ def get_transactions():
         else:
             return jsonify({"Message":"No Transaction Found"})
 
-
-
     except Exception as e:
         return jsonify({"Error":str(e)})
 
@@ -279,6 +277,38 @@ def wallet_state():
     collection = db["wallets"]
     
     collection.find_one_and_update({"_id":request_data["task"]["id"]},{"$set": {"walletstatus": request_data["task"]["state"]}})
+
+    return jsonify({"message":"Action Completed"})
+
+
+# Get Global Maintenance Status API route
+@app.route(os.getenv("GET_MAINTENANCE"),methods=["GET"])
+def get_maintenance():
+    collection = db["globalinfos"]
+    
+    result = collection.find_one()
+
+    try:
+        if result:
+            return jsonify({"message": "Successful", "Result": {"maintinanceMode": result["maintinanceMode"],"maintinanceMessage": result["maintinanceMessage"]}})
+        else:
+            return jsonify({"message": "Failed"})
+    except Exception as e:
+        return jsonify({"error": str(e)})       
+
+# Updating Global Maintenance Status API route
+@app.route(os.getenv("MAINTENANCE"),methods=["POST"])
+def maintenance():
+    request_data = request.json
+    collection = db["globalinfos"]
+
+    print(request_data)
+
+    if(request_data["command"] == "start"):
+        collection.update_many({},{"$set": {"maintinanceMode": "Under Maintenance","maintinanceMessage": "We are currently under maintenance. Please try again later."}})
+
+    if(request_data["command"] == "stop"):
+        collection.update_many({},{"$set": {"maintinanceMode": "Active","maintinanceMessage": "We are currently active."}})
 
     return jsonify({"message":"Action Completed"})
 
